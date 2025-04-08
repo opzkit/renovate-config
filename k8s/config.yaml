@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renovate-config
+  namespace: renovate
+data:
+  config.js: |
+    module.exports = {
+      platform: 'github',
+      autodiscover: true,
+      githubTokenWarn: false,
+      token: '##TOKEN##',
+      semanticCommits: 'enabled'
+    }
+
+  entrypoint.sh: |
+    #!/usr/bin/env bash
+
+    set -o errexit -o pipefail -o noclobber -o nounset
+
+    pacman -Sy --noconfirm jwt-cli jq
+
+    SECRET_FILE="${SECRET_FILE?needs a value}"
+    APP_ID="${APP_ID?needs a value}"
+    INSTALLATION_ID="${INSTALLATION_ID?needs a value}"
+    CONFIG_FILE_SOURCE="${CONFIG_FILE_SOURCE?needs a value}"
+    CONFIG_FILE_TARGET="${CONFIG_FILE_TARGET?needs a value}"
+
+    echo "Using ${CONFIG_FILE_SOURCE} as config source"
+    echo "Generating a bearer token for app_id:
+      ${APP_ID} using secret: ${SECRET_FILE}"
+    jwt=$(jwt encode --alg RS256 --secret @"${SECRET_FILE}" "{\"iat\":$(date +%s), \"exp\":$(date +%s -d +'10 minutes'), \"iss\": ${APP_ID}}")
+
+    echo "Getting an auth token for installation_id: ${INSTALLATION_ID}"
+    TOKEN=$(curl --silent -XPOST \
+    -H 'Accept: application/vnd.github+json' \
+    -H 'X-GitHub-Api-Version: 2022-11-28' \
+    -H "Authorization: Bearer $jwt" \
+    "https://api.github.com/app/installations/${INSTALLATION_ID}/access_tokens" | jq -r .token)
+
+    echo "Got an auth token for installation_id: ${INSTALLATION_ID}"
+    echo "Updating configuration file with auth token"
+
+    sed "s/##TOKEN##/${TOKEN}/" "${CONFIG_FILE_SOURCE}" >| "${CONFIG_FILE_TARGET}"
+    echo "Auth token written to: ${CONFIG_FILE_TARGET}"
