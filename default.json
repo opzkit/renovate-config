@@ -1,0 +1,19 @@
+{
+  "configMigration": true,
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    ":pinDevDependencies",
+    ":pinDependencies",
+    ":semanticCommits"
+  ],
+  "baseBranches": ["main"],
+  "rebaseWhen": "conflicted",
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "pre-commit": {
+    "enabled": true
+  }
+}

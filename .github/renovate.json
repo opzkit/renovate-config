@@ -1,0 +1,3 @@
+{
+  "extends": ["github>opzkit/renovate-config"]
+}
