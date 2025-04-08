@@ -15,5 +15,11 @@
   "prHourlyLimit": 0,
   "pre-commit": {
     "enabled": true
+  },
+  "kubernetes": {
+    "fileMatch": ["k8s/.+\\.yaml$", "kind/.+\\.yaml$"]
+  },
+  "hermit": {
+    "enabled": true
   }
 }

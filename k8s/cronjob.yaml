@@ -1,0 +1,108 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    app.kubernetes.io/name: renovate
+  name: renovate
+  namespace: renovate
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: renovate
+    spec:
+      backoffLimit: 0
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: renovate
+        spec:
+          initContainers:
+            - name: generate-token
+              image: archlinux:base-20241006.0.268140@sha256:76a914dcc991e0b85bb858a94486afb3a44fd5d832e4b230af48b7357a2814c3
+              command: ["/bin/bash"]
+              args: ['/entrypoint/entrypoint.sh']
+              resources:
+                requests:
+                  cpu: 500m
+                  memory: 500Mi
+                limits:
+                  cpu: 500m
+                  memory: 500Mi
+              volumeMounts:
+                - mountPath: /entrypoint
+                  name: entrypoint
+                - mountPath: /key
+                  name: credentials
+                - mountPath: /renovate-org-config/
+                  name: original-config-volume
+                - mountPath: /renovate-config/
+                  name: config-volume
+              env:
+                - name: SECRET_FILE
+                  value: /key/privatekey.pem
+                - name: CONFIG_FILE_TARGET
+                  value: /renovate-config/config.js
+                - name: CONFIG_FILE_SOURCE
+                  value: /renovate-org-config/config.js
+                - name: APP_ID
+                  value: '1208199'
+                - name: INSTALLATION_ID
+                  value: '64137504'
+          containers:
+            - env:
+                - name: RENOVATE_CONFIG_FILE
+                  value: /opt/renovate/config.js
+                - name: GITHUB_COM_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: credentials
+                      key: GITHUB_COM_TOKEN
+              image: ghcr.io/renovatebot/renovate:39.235.2-full@sha256:50a027060f41e5bacff69b56ed184a6a03ee638df44b8a8c7ec0bff7c0983eaf
+              imagePullPolicy: IfNotPresent
+              name: renovate
+              resources:
+                requests:
+                  cpu: 1000m
+                  memory: 2Gi
+                limits:
+                  cpu: 1500m
+                  memory: 2Gi
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+                - mountPath: /opt/renovate/
+                  name: config-volume
+          dnsPolicy: ClusterFirst
+          restartPolicy: Never
+          schedulerName: default-scheduler
+          securityContext:
+            fsGroup: 1000
+          serviceAccountName: default
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - name: credentials
+              secret:
+                secretName: credentials
+                optional: false
+                items:
+                  - key: privatekey.pem
+                    path: privatekey.pem
+            - configMap:
+                defaultMode: 420
+                name: renovate-config
+                items:
+                  - key: entrypoint.sh
+                    path: entrypoint.sh
+              name: entrypoint
+            - configMap:
+                defaultMode: 420
+                name: renovate-config
+              name: original-config-volume
+            - emptyDir: { }
+              name: config-volume
+  schedule: 0 */4 * * *
+  successfulJobsHistoryLimit: 3
+  suspend: false
