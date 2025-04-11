@@ -1,6 +1,6 @@
 {
   "configMigration": true,
-  "extends": [
+  "globalExtends": [
     "config:recommended",
     "docker:pinDigests",
     "helpers:pinGitHubActionDigests",
@@ -8,16 +8,35 @@
     ":pinDependencies",
     ":semanticCommits"
   ],
-  "baseBranches": ["main"],
+  "ignorePresets": [
+    ":ignorePaths"
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__fixtures__/**"
+  ],
+  "baseBranches": [
+    "main"
+  ],
   "rebaseWhen": "conflicted",
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
   "pre-commit": {
     "enabled": true
   },
   "kubernetes": {
-    "fileMatch": ["k8s/.+\\.yaml$", "kind/.+\\.yaml$"]
+    "fileMatch": [
+      "k8s/.+\\.yaml$",
+      "kind/.+\\.yaml$"
+    ]
   },
   "hermit": {
     "enabled": true
