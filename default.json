@@ -1,6 +1,6 @@
 {
   "configMigration": true,
-  "globalExtends": [
+  "extends": [
     "config:recommended",
     "docker:pinDigests",
     "helpers:pinGitHubActionDigests",
