@@ -44,11 +44,14 @@
   "packageRules": [
     {
       "matchManagers": [
-        "dockerfile"
+        "dockerfile",
+        "kubernetes",
+        "pre-commit"
       ],
       "matchUpdateTypes": [
         "minor",
-        "patch"
+        "patch",
+        "digest"
       ],
       "automerge": true,
       "automergeType": "pr"
