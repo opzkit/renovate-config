@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/name: approvebot
   name: approvebot
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app.kubernetes.io/name: approvebot
@@ -39,11 +40,8 @@ spec:
       containers:
         - name: approvebot
           env:
-            #opzkit-renovate-approver
-            - name: RENOVATE_BOT_USER
-              value: 'opzkit-renovate[bot]'
             - name: APP_ID
-              value: '1313148'
+              value: '1328165'
             - name: NODE_ENV
               value: 'production'
             - name: PRIVATE_KEY
@@ -56,6 +54,13 @@ spec:
                 secretKeyRef:
                   name: credentials
                   key: WEBHOOK_SECRET
+          readinessProbe:
+            httpGet:
+              path: /probot
+              port: web
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
           resources:
             requests:
               cpu: 100m
@@ -93,7 +98,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/healthcheck-path: '/' #  TODO
+    alb.ingress.kubernetes.io/healthcheck-path: '/probot'
     alb.ingress.kubernetes.io/load-balancer-attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=929585105493-eu-west-1-k8s-alb-access-logs
   name: approvebot
 spec:
