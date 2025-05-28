@@ -8,18 +8,6 @@
     ":pinDependencies",
     ":semanticCommits"
   ],
-  "ignorePresets": [
-    ":ignorePaths"
-  ],
-  "ignorePaths": [
-    "**/node_modules/**",
-    "**/bower_components/**",
-    "**/vendor/**",
-    "**/__tests__/**",
-    "**/test/**",
-    "**/tests/**",
-    "**/__fixtures__/**"
-  ],
   "baseBranches": [
     "main"
   ],
@@ -27,11 +15,10 @@
   "labels": [
     "dependencies"
   ],
+  "automergeStrategy": "squash",
+  "automergeType": "pr",
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
-  "pre-commit": {
-    "enabled": true
-  },
   "kubernetes": {
     "fileMatch": [
       "k8s/.+\\.yaml$",
@@ -41,20 +28,33 @@
   "hermit": {
     "enabled": true
   },
+  "pre-commit": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "matchManagers": [
-        "dockerfile",
         "kubernetes",
-        "pre-commit"
+        "pre-commit",
+        "dockerfile",
+        "github-actions"
       ],
       "matchUpdateTypes": [
         "minor",
         "patch",
-        "digest"
+        "digest",
+        "pinDigest"
       ],
-      "automerge": true,
-      "automergeType": "pr"
+      "automerge": true
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "automerge": false
     }
   ]
 }
