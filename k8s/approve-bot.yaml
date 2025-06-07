@@ -69,7 +69,7 @@ spec:
               cpu: 500m
               memory: 200Mi
           imagePullPolicy: IfNotPresent
-          image: ghcr.io/renovatebot/renovate-approve-bot:main@sha256:d7659afde90c049d41a054403fe1ba4a9a8a3ba04e65edd92e7f02bab7a9157b
+          image: ghcr.io/renovatebot/renovate-approve-bot:main@sha256:a0350b76a3e7b0fa40cd8f69862b7f451b8cda34343e3c85f8d3bb4a5ad3cd70
           ports:
             - name: web
               containerPort: 3000
