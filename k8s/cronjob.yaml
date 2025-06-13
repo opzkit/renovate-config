@@ -60,7 +60,7 @@ spec:
                     secretKeyRef:
                       name: credentials
                       key: GITHUB_COM_TOKEN
-              image: ghcr.io/renovatebot/renovate:40.51.2-full@sha256:043d8876a12bbed272782fd6e3c42b25546093be03a12fb275f69397d62c3b6a
+              image: ghcr.io/renovatebot/renovate:40.53.1-full@sha256:4519299ab8ddf362190fd2e54a6883dbd660b8fc9516bae56c731d12eb710443
               imagePullPolicy: IfNotPresent
               name: renovate
               resources:
