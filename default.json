@@ -20,9 +20,9 @@
   "prConcurrentLimit": 0,
   "prHourlyLimit": 0,
   "kubernetes": {
-    "fileMatch": [
-      "k8s/.+\\.yaml$",
-      "kind/.+\\.yaml$"
+    "managerFilePatterns": [
+      "/k8s/.+\\.yaml$/",
+      "/kind/.+\\.yaml$/"
     ]
   },
   "hermit": {
