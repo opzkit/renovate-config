@@ -12,6 +12,7 @@
     "main"
   ],
   "rebaseWhen": "conflicted",
+  "minimumReleaseAge": "3 days",
   "labels": [
     "dependencies"
   ],
